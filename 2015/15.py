@@ -17,6 +17,16 @@ def gen_valid_sums(n, r1, r2):
     return [x for x in numbers if sum(x) == 100]
 
 
+def gen_valid_sums_hardcoded():
+    sums = []
+    for i in range(1, 100):
+        for j in range(1, 100 - i):
+            for k in range(1, 100 - i - j):
+                l = 100 - i - j - k
+                sums.append([i, j, k, l])
+    return sums
+
+
 def day15():
     with open("15.txt") as f:
         lines = f.readlines()
@@ -36,7 +46,8 @@ def day15():
         )
     max_score_part1 = 0
     max_score_part2 = 0
-    sums = gen_valid_sums(4, 1, 97)
+    # sums = gen_valid_sums(4, 1, 97)
+    sums = gen_valid_sums_hardcoded()
     for s in sums:
         current_score, calories = get_score(flavors, s)
         max_score_part1 = max(max_score_part1, current_score)
