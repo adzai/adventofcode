@@ -36,8 +36,6 @@ def part1(sequence, table):
                 result_table[sequence[:i-1] + val + sequence[i+1:]] = None
     return len(result_table.keys())
 
-print("Part 1:", part1(sequence, table))
-
 def part2(sequence, table):
     new_table = dict()
     for k, v in table.items():
@@ -59,4 +57,5 @@ def part2(sequence, table):
                             return steps
     return steps
 
+print("Part 1:", part1(sequence, table))
 print("Part 2:", part2(sequence, table))
