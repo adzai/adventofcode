@@ -3,6 +3,8 @@ with open("19.txt") as f:
     lines = list(map(lambda x: x.strip().split(), f.readlines()))
 
 # lines = [
+# "e => H",
+# "e => O",
 # "H => HO",
 # "H => OH",
 # "O => HH",
@@ -16,7 +18,7 @@ for line in lines[:-2]:
     key = line[0]
     val = line[-1]
     if table.get(key):
-        table[key] = table[key] + [val]
+        table[key] += [val]
     else:
         table[key] = [val]
 
@@ -35,3 +37,26 @@ def part1(sequence, table):
     return len(result_table.keys())
 
 print("Part 1:", part1(sequence, table))
+
+def part2(sequence, table):
+    new_table = dict()
+    for k, v in table.items():
+        for val in v:
+            length = len(val)
+            if new_table.get(length):
+                new_table[length] += [{k: val}]
+            else:
+                new_table[length] = [{k: val}]
+    steps = 0
+    while sequence != "e":
+        for i in reversed(sorted(new_table.keys())):
+            for d in new_table[i]:
+                for k in sorted(d.keys()):
+                    while sequence.find(d[k]) != -1:
+                        sequence = sequence.replace(d[k], k)
+                        steps += 1
+                        if sequence == "e":
+                            return steps
+    return steps
+
+print("Part 2:", part2(sequence, table))
