@@ -22,19 +22,21 @@ for line in lines[:-2]:
     else:
         table[key] = [val]
 
+
 def part1(sequence, table):
     double_char = ""
     result_table = dict()
     for i, char in enumerate(sequence):
         if i > 0:
-            double_char = sequence[i-1] + sequence[i]
+            double_char = sequence[i - 1] + sequence[i]
         if table.get(char):
             for val in table[char]:
-                result_table[sequence[:i] + val + sequence[i+1:]] = None
+                result_table[sequence[:i] + val + sequence[i + 1 :]] = None
         if table.get(double_char):
             for val in table[double_char]:
-                result_table[sequence[:i-1] + val + sequence[i+1:]] = None
+                result_table[sequence[: i - 1] + val + sequence[i + 1 :]] = None
     return len(result_table.keys())
+
 
 def part2(sequence, table):
     new_table = dict()
@@ -51,11 +53,14 @@ def part2(sequence, table):
             for d in new_table[i]:
                 for k in sorted(d.keys()):
                     while sequence.find(d[k]) != -1:
-                        sequence = sequence.replace(d[k], k)
+                        sequence = sequence.replace(
+                            d[k], k, 1
+                        )  # replace only 1, not multiple ...
                         steps += 1
                         if sequence == "e":
                             return steps
     return steps
+
 
 print("Part 1:", part1(sequence, table))
 print("Part 2:", part2(sequence, table))
