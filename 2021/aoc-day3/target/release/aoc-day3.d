@@ -1,0 +1,1 @@
+/home/adam/projects/practice/adventofcode/2021/aoc-day3/target/release/aoc-day3: /home/adam/projects/practice/adventofcode/2021/aoc-day3/3.txt /home/adam/projects/practice/adventofcode/2021/aoc-day3/src/main.rs
