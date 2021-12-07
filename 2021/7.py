@@ -3,8 +3,18 @@ with open("7.input") as f:
 
 
 def solve(input, part2=False):
+    spread = 25
+    prev_result = None
+    while True:
+        result = solve_helper(input, spread, part2)
+        if result == prev_result:
+            return result
+        prev_result = result
+        spread *= 2
+
+
+def solve_helper(input, spread, part2):
     mid = len(input) // 2
-    spread = 100
     pivots = [
         input[i] for i in range(max(0, mid - spread), min(mid + spread, len(input)))
     ]
@@ -15,8 +25,8 @@ def solve(input, part2=False):
         for num in input:
             steps = abs(num - pivot)
             if part2:
-                for i in range(1, steps + 1):
-                    current_sum += i
+                gauss = steps * (steps + 1) // 2
+                current_sum += gauss
             else:
                 current_sum += steps
         if lowest_sum is None or current_sum < lowest_sum:
