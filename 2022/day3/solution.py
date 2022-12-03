@@ -29,7 +29,7 @@ def part2(lines):
         line1 = lines[idx]
         line2 = lines[idx + 1]
         line3 = lines[idx + 2]
-        shared_letter = list(set(line1).intersection(line2).intersection(line3))[0]
+        shared_letter = list(set(line1).intersection(line2, line3))[0]
         total_prio += priority_lookup[shared_letter]
         idx += 3
 
