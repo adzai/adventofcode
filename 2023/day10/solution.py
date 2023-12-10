@@ -1,7 +1,3 @@
-import time
-import shapely
-
-
 class Node:
     def __init__(self, val, valid_indexes, coords):
         self.children = []
