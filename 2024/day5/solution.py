@@ -96,10 +96,6 @@ if __name__ == "__main__":
         else:
             incorrect_lines.append(page)
 
-    part1_total = 0
-    for line in correct_lines:
-        part1_total += int(line[len(line) // 2])
-
     print("Part 1:", sum([int(line[len(line) // 2]) for line in correct_lines]))
 
     part2_total = 0
