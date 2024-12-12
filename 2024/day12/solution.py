@@ -10,44 +10,49 @@ class Region:
         self.perimeter = perimeter
         self.coordinates = [(x, y)]
         self.sides = 0
-        self.counted_sides = [False, False, False, False]
 
     def __repr__(self) -> str:
         return f"{self.letter} <> area: {self.area}, perimeter: {self.perimeter}, sides: {self.sides}"
 
 
-def is_in_bounds(x, y, x_bound, y_bound):
-    return 0 <= x and x < x_bound and 0 <= y and y < y_bound
-
-
 def calculate_perimeter(grid, x, y):
-    current_letter = grid[x][y]
-    x_bound, y_bound = len(grid), len(grid[0])
+    current_letter = grid.get((x, y))
     perimeter = 0
     for direction_x, direction_y in [UP, DOWN, LEFT, RIGHT]:
-        if (
-            not is_in_bounds(x + direction_x, y + direction_y, x_bound, y_bound)
-            or grid[x + direction_x][y + direction_y] != current_letter
-        ):
+        if (next_letter := grid.get((x + direction_x, y + direction_y))) is None or next_letter != current_letter:
             perimeter += 1
 
     return perimeter
 
 
-def generate_neighbors(grid, x, y, letter):
+def get_neighbors(grid, x, y, letter):
     neighbors = []
     for dir_x, dir_y in [UP, DOWN, LEFT, RIGHT]:
-        if is_in_bounds(dir_x + x, dir_y + y, len(grid), len(grid[0])) and grid[dir_x + x][dir_y + y] == letter:
+        if (next_letter := grid.get((dir_x + x, dir_y + y))) and next_letter == letter:
             neighbors.append((dir_x + x, dir_y + y))
 
     return neighbors
 
 
+def get_sides(grid, x, y):
+    current_cell = grid.get((x, y))
+    res = []
+    for pair_one, pair_two in [(UP, LEFT), (UP, RIGHT), (DOWN, LEFT), (DOWN, RIGHT)]:
+        up_cell = grid.get((x + pair_one[0], y + pair_one[1]))
+        left_cell = grid.get((x + pair_two[0], y + pair_two[1]))
+        up_left_cell = grid.get((x + pair_one[0], y + pair_two[1]))
+        res.append(
+            (up_cell != current_cell and left_cell != current_cell)
+            or (left_cell == current_cell and up_cell == current_cell and up_left_cell != current_cell)
+        )
+
+    return sum(res)
+
+
 def get_region(grid, x, y, visited):
-    letter = grid[x][y]
-    region = Region(letter, x, y, 1, calculate_perimeter(grid, x, y))
-    to_visit = generate_neighbors(grid, x, y, letter)
-    visited.add((x, y))
+    letter = grid.get((x, y))
+    region = Region(letter, x, y, 0, 0)
+    to_visit = [(x, y)]
     while len(to_visit) > 0:
         coordinates = to_visit.pop(0)
         if coordinates in visited:
@@ -55,15 +60,13 @@ def get_region(grid, x, y, visited):
 
         visited.add(coordinates)
 
-        if (
-            is_in_bounds(coordinates[0], coordinates[1], len(grid), len(grid[0]))
-            and grid[coordinates[0]][coordinates[1]] == letter
-        ):
+        if (next_letter := grid.get((coordinates[0], coordinates[1]))) is not None and next_letter == letter:
             region.coordinates.append(coordinates)
             region.area += 1
             region.perimeter += calculate_perimeter(grid, coordinates[0], coordinates[1])
+            region.sides += get_sides(grid, coordinates[0], coordinates[1])
             visited.add(coordinates)
-            to_visit.extend(generate_neighbors(grid, coordinates[0], coordinates[1], letter))
+            to_visit.extend(get_neighbors(grid, coordinates[0], coordinates[1], letter))
 
     return region
 
@@ -72,19 +75,18 @@ if __name__ == "__main__":
     with open("input.txt") as f:
         input = f.read().split("\n")[:-1]
 
-    grid = [list(row) for row in input]
-    x_bound, y_bound = len(grid), len(grid[0])
+    grid = {(x, y): cell for x, row in enumerate(input) for y, cell in enumerate(list(row))}
 
-    d = {}
-    global_visited = set()
+    visited = set()
     regions = []
-    for i, row in enumerate(grid):
-        for j, cell in enumerate(row):
-            if (i, j) not in global_visited:
-                regions.append(get_region(grid, i, j, global_visited))
+    for x, y in grid.keys():
+        if (x, y) not in visited:
+            regions.append(get_region(grid, x, y, visited))
 
-    total = 0
+    part1, part2 = 0, 0
     for region in regions:
-        total += region.area * region.perimeter
+        part1 += region.area * region.perimeter
+        part2 += region.area * region.sides
 
-    print("Part 1:", total)
+    print("Part 1:", part1)
+    print("Part 2:", part2)
