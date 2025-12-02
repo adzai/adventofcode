@@ -1,9 +1,7 @@
-defmodule Day1 do
+defmodule Day01 do
   def part1(file) do
     file
-    |> File.read!()
-    |> String.trim()
-    |> String.split("\n")
+    |> Aoc.read_lines()
     |> Enum.map(&parse_instruction/1)
     |> Enum.reduce(%{pos: 50, count: 0}, fn delta, %{pos: pos, count: count} ->
       new_pos = Integer.mod(pos + delta, 100)
@@ -15,9 +13,7 @@ defmodule Day1 do
 
   def part2(file) do
     file
-    |> File.read!()
-    |> String.trim()
-    |> String.split("\n")
+    |> Aoc.read_lines()
     |> Enum.map(&parse_instruction/1)
     |> Enum.reduce(%{pos: 50, count: 0}, fn delta, %{pos: pos, count: count} ->
       new_pos = Integer.mod(pos + delta, 100)
@@ -35,6 +31,3 @@ defmodule Day1 do
   defp count_crosses(0, delta), do: div(-delta, 100)
   defp count_crosses(old_pos, delta), do: 1 + div(-(old_pos + delta), 100)
 end
-
-IO.puts("Part 1: #{Day1.part1("input.txt")}")
-IO.puts("Part 2: #{Day1.part2("input.txt")}")
